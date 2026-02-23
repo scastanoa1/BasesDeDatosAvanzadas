@@ -19,6 +19,13 @@ CREATE INDEX IF NOT EXISTS idx_payment_order_id ON payment(order_id);
 CREATE INDEX IF NOT EXISTS idx_payment_approved_order ON payment(order_id) WHERE payment_status = 'APPROVED';
 
 -- Q7
-CREATE INDEX IF NOT EXISTS idx_orders_order_date_order_id ON orders(order_date, order_id);
-CREATE INDEX IF NOT EXISTS idx_order_item_order_id_inc 
-ON order_item(order_id) INCLUDE (product_id, quantity, unit_price);
+CREATE INDEX IF NOT EXISTS idx_orders_order_date_order_id
+ON orders (order_date, order_id);
+CREATE INDEX IF NOT EXISTS idx_order_item_order_id_inc
+ON order_item (order_id)
+INCLUDE (product_id, quantity, unit_price);
+
+-- Q8
+CREATE INDEX IF NOT EXISTS idx_orders_odate_cust_inc
+ON orders (order_date, customer_id)
+INCLUDE (total_amount);

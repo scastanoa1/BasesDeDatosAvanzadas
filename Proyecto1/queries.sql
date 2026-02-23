@@ -47,3 +47,35 @@ JOIN payment p ON p.order_id = o.order_id
 WHERE p.payment_status = 'APPROVED'
 GROUP BY o.status
 ORDER BY n DESC;
+
+-- Q8 (Top 50 productos por ingresos en un mes)
+EXPLAIN (ANALYZE, BUFFERS) 
+SELECT 
+  p.category, 
+  p.product_id, 
+  p.name, 
+  SUM(oi.quantity * oi.unit_price) AS revenue, 
+  SUM(oi.quantity) AS units_sold 
+FROM order_item oi 
+JOIN orders o   ON o.order_id = oi.order_id 
+JOIN product p  ON p.product_id = oi.product_id 
+WHERE o.order_date >= '2023-01-01'::timestamptz 
+  AND o.order_date <  '2023-02-01'::timestamptz 
+GROUP BY p.category, p.product_id, p.name 
+ORDER BY revenue DESC 
+LIMIT 50; 
+
+-- Q8 (Top Clientes con más gasto)
+EXPLAIN (ANALYZE, BUFFERS) 
+SELECT 
+  c.customer_id, 
+  c.city, 
+  SUM(o.total_amount) AS total_spent, 
+  COUNT(*) AS orders_count 
+FROM orders o 
+JOIN customer c ON c.customer_id = o.customer_id 
+WHERE o.order_date >= '2023-01-01'::timestamptz 
+  AND o.order_date <  '2024-01-01'::timestamptz 
+GROUP BY c.customer_id, c.city 
+ORDER BY total_spent DESC 
+LIMIT 50; 
